@@ -70,10 +70,12 @@ def read_in_TCANE(filename):
     return df
 ################
 ### `get_TCANE_distribution_intensity (df,ttype_sel,df_in)`
-# This script estimates TCANE distribution from TCANE data. 
+# This script extracts TCANE distribution parameters from TCANE output data. 
 # 
 # <b>Inputs</b>:
-# * `file`: name of file to read into Dataframe [str]
+# * `df`: Dataframe containing TCANE model output [Dataframe]
+# * `ttype_sel`: indicator for `erly` vs `late` forecasts [str]
+# * `df_in`: Dataframe containing TCANE input files; input file is needed to provide intensity estimates at time = 0 [Dataframe]
 # 
 # <b>Outputs</b>: 
 # * `df_tcdist`: `Pandas` DataFrame that contains the `mu`, `sigma`, `gamma`, and `tau` variables from the TCANE files [DataFrame]
@@ -85,6 +87,7 @@ def get_TCANE_distribution(df,ttype_sel,df_in):
     for ihr in dfx.index:
         if ihr not in dfi.index:
             continue
+        # Save the TCANE distribution information from TCANE output files
         dist_tcane = [float(dfx.loc[ihr]['MU']) + float(dfi.loc[ihr]['VMAXN']), float(dfx.loc[ihr]['SIGMA']), float(dfx.loc[ihr]['GAMMA']), float(dfx.loc[ihr]['TAU'])]
         df_tcdist.loc[ihr]['DIST'] = dist_tcane
         df_tcdist.loc[ihr]['TTYPE'] = ttype_sel

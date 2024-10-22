@@ -22,6 +22,16 @@ from utils.mahalanobis import get_pixel_array, plot_cdf, compute_cdf, compute_rs
 # from plots import plot_probability_ellipses
 
 #1. Call functions to make intensity forecast plots
+# This function plots the TCANE intensity forecast and compares it to the TCANE consensus forecast (for early forecasts) or the official NHC forecast (for late forecasts). 
+#
+# <b>Inputs</b>:
+# * `pct_e`: Dataframe containing the TCANE intensity forecast uncertainty distribution [dataframe]
+# * `dfout`: TCANE output data file [dataframe]
+# * `dfin`: TCANE input data file [dataframe]
+# * `stormdate`: contains storm ID and forecast ID, used to label and save plots [str]
+# * `targetdir`: output directory where figures will be saved [str]
+# * `type_sel`: indicates early or late forecasts [`erly` or `late`, str]
+
 def TCANE_plots_intensity_forecasts(pct_e,dfout,dfin,stormdate,targetdir,type_sel):
     # Make plot
     if type_sel == 'erly':
@@ -50,6 +60,20 @@ def TCANE_plots_intensity_forecasts(pct_e,dfout,dfin,stormdate,targetdir,type_se
     return ('intensity forecats plots done')
 
 #2. Call functions to make category and RI plots
+# This function plots the TCANE RI forecast and category probability plots. 
+#
+# <b>Inputs</b>:
+# * `TC_e`: Dataframe containing the TCANE intensity forecast Category 1...5 probabilities [dataframe]
+# * `c_TC_e`: Dataframe containing the intensity forecast Category 1...5 probabilities for TCANE climo [dataframe]
+# * `df_in`: TCANE input data file [dataframe]
+# * `storm_date`: contains storm ID and forecast ID, used to label and save plots [str]
+# * `target_savedir`: output directory where figures will be saved [str]
+# * `type_sel`: indicates early or late forecasts [`erly` or `late`, str]
+# * `RI_e`: Dataframe containing TCANE rapid intensification forecasts [dataframe]
+# * `edeck_all`: Dataframe containing edeck intensity forecasts for given storm [dataframe]
+# * `bas_ab`: Abbreviation for forecast basin [str]
+# * `c_RI_e`: Dataframe containing rapid intensification forecasts for TCANE climo [dataframe]
+
 def TCANE_plots_cat_and_RI_plots(TC_e,c_TC_e,df_in,storm_date,target_savedir,type_sel,RI_e,edeck_all,bas_ab,c_RI_e):
     if type_sel == 'erly':
         type_sel_plt = 'EARLY'
@@ -89,7 +113,20 @@ def TCANE_plots_cat_and_RI_plots(TC_e,c_TC_e,df_in,storm_date,target_savedir,typ
     
     return ('RI and Pr(Category) plots done')
 
-##3. Make track probability plots. Default chosen contour is 66.667% but user can change
+##3. Make track probability plots. Default chosen contour is 66.667% but user can change `cmax` argument if they want to plot a different contour. 
+
+# This function plots the TCANE track forecast uncertainty at a level specified by `cmax` and compares this TCANE forecast uncertainty to a TCANE climatological forecast uncertainty. 
+#
+# <b>Inputs</b>:
+# * `track_sub`: Dataframe containing the TCANE track forecast variables [dataframe]
+# * `df_out`: TCANE output data file [dataframe]
+# * `track_sub_clim`: Dataframe containing the TCANE track forecast variables for TCANE_climo [dataframe]
+# * `storm_date`: contains storm ID and forecast ID, used to label and save plots [str]
+# * `df_in`: TCANE input data file [dataframe]
+# * `target_savedir`: output directory where figures will be saved [str]
+# * `type_sel`: indicates early or late forecasts [`erly` or `late`, str]
+# * `cmax`: specified uncertainty level for TCANE plots; must be a fraction between 0 and 1. Default is 0.6667 [float]
+
 def TCANE_track_plots_with_climo(track_sub,df_out,track_sub_clim,storm_date,df_in,target_savedir,type_sel,cmax=np.round(2/3,3)):
     if type_sel == 'erly':
         type_sel_plt = 'EARLY'
@@ -112,6 +149,17 @@ def TCANE_track_plots_with_climo(track_sub,df_out,track_sub_clim,storm_date,df_i
     return ('Track plotted with climo for ',cmax)
 
 ##4. Make track plot all ellipses
+
+# This function makes the TCANE track plot with the full uncertainty distribution. 
+#
+# <b>Inputs</b>:
+# * `track_sub`: Dataframe containing the TCANE track forecast variables [dataframe]
+# * `df_out`: TCANE output data file [dataframe]
+# * `target_savedir`: output directory where figures will be saved [str]
+# * `type_sel`: indicates early or late forecasts [`erly` or `late`, str]
+# * `df_in`: TCANE input data file [dataframe]
+# * `storm_date`: contains storm ID and forecast ID, used to label and save plots [str]
+
 def TCANE_track_plot_all(track_sub,df_out,target_savedir,type_sel,df_in,storm_date):
     if type_sel == 'erly':
         type_sel_plt = 'EARLY'

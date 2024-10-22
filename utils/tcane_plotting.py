@@ -239,7 +239,7 @@ def make_all_plotting_data(df_in,df_out,xmax,type_sel,pvc=None):
 ###
 ### `plot_RI_bar(ax,df,type_sel,df_clim,basin,edeck_all)`
 # 
-# This function calculates the probability of rapid intensification (RI) for the TCANE forecasts. There is an option to compare the TCANE forecasts to other forecasts within the edecks. This function presents the information in a bar plot
+# This function calculates the probability of rapid intensification (RI) for the TCANE forecasts. There is an option to compare the TCANE forecasts to other forecasts within the edecks. This function presents the information in a bar plot and includes climatological probabilities of RI. 
 # 
 # <b>Input</b>: 
 # * `ax`: Figure axis
@@ -312,16 +312,15 @@ def plot_RI_bar(ax,df,type_sel,df_clim,basin,edeck_all=pd.DataFrame()):
 ##1. make_TCANE_dists_pdf_cdf(dfout,dfin):
 ## Call functions get_TCANE_distribution, make_SHASH, and get_PDF_CDF from tcane_data_funcs. 
 ## Inputs:
-## dfout: Dataframe containing TCANE outputs
-## dfin: Dataframe containing TCANE inputs 
+## dfout: Dataframe containing TCANE outputs [dataframe]
+## dfin: Dataframe containing TCANE inputs [dataframe]
+## type_sel: indicates early or late forecasts [str]
 ##
 ## Outputs:
-## tcane_dist_ERLY: parameters of TCANE distribution (i.e. mu, sigma) for early forecasts [dataframe]
-## tcane_dist_LATE: same as above but for late forecasts [dataframe]
-## Yshash_erly: creating the actual SHASH distribution following the parameters for early forecasts [dataframe]
-## Yshash_late: same as above but for late forecasts [dataframe]
-## pdf_cdf_erly: get PDF and CDF from SHASH distribution for early forecasts [dataframe]
-## pdf_cdf_late: get PDF and CDF from SHASH distribution for late forecasts [dataframe]
+## tcane_dist: parameters of TCANE distribution (i.e. mu, sigma) for early forecasts [dataframe]
+## Yshash: creating the actual SHASH distribution following the parameters for early forecasts [dataframe]
+## pdf_cdf: get PDF and CDF from SHASH distribution for early forecasts [dataframe]
+
 ##
 def make_TCANE_dists_pdf_cdf(dfout,dfin,type_sel):
     # Make distribution parameters for ERLY and LATE forecasts and the climatological ERLY/LATE forecasts

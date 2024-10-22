@@ -50,19 +50,43 @@ def plot_ellipse(ax, sigma_u, sigma_v, rho, color):
     y = r * sigma_v * (rho * np.cos(THETA) + np.sqrt(1 - rho * rho) * np.sin(THETA))
     ax.plot(x, y, '-', color=color, linewidth=4)
 
-##
-def get_plot_vars_TRACK(X_out,X_in,fore_sel):
-    X_plot = X_out.set_index(['FHOUR','TTYPE']).xs((fore_sel),level=1)[['LONN','LATN','DATE','MU_U','MU_V','SIGMA_U','SIGMA_V','RHO','NAME']]
+## `get_plot_vars_TRACK(X_out,X_in,ttype_sel)`
+# 
+# This function just reformats some TCANE track forecast variables for easier plotting
+# 
+# <b>Inputs</b>:
+# * `X_out`: Dataframe containing TCANE output for track forecasts [Dataframe]
+# * `X_in`: Dataframe containing TCANE input data [Dataframe]
+# * `ttype_sel`: time type (`erly` or `late`) [str]
+# 
+# <b>Outputs</b>: 
+# * `X_p2`: Dataframe containing reformatted TCANE track forecast data [Dataframe]
+# * `X_plot`: Dataframe containing reformatted TCANE track forecast data [Dataframe]
+
+def get_plot_vars_TRACK(X_out,X_in,ttype_sel):
+    X_plot = X_out.set_index(['FHOUR','TTYPE']).xs((ttype_sel),level=1)[['LONN','LATN','DATE','MU_U','MU_V','SIGMA_U','SIGMA_V','RHO','NAME']]
     X_plot[['OFDX','OFDY']] = X_in.set_index(['FHOUR'])[['OFDX','OFDY']]
     X_plot['ftime(hr)'] = X_plot.index
     X_plot = X_plot.rename(columns={'MU_U':'mu_u','MU_V':'mu_v','SIGMA_U':'sigma_u','SIGMA_V':'sigma_v','RHO':'rho','NAME':'Name'})
     fore_vecs = np.arange(12,X_plot.dropna(how='any').index.max()+1,12)
     X_p2 = X_plot.loc[fore_vecs]
     X_p2['rho'] = X_p2['rho'].astype(float)
-    X_p2['ttype'] = fore_sel
-    X_plot['ttype'] = fore_sel
+    X_p2['ttype'] = ttype_sel
+    X_plot['ttype'] = ttype_sel
     return X_p2,X_plot
-#
+## `get_plot_lims_fore(X)`
+# 
+# This function estimates the limits of the track forecast graphical products using the TCANE output data. 
+# 
+# <b>Inputs</b>:
+# * `X`: Dataframe containing TCANE output for track forecasts [Dataframe]
+# 
+# <b>Outputs</b>:
+# * `x_lims`: x-limits for TCANE track plot, in degrees longitude [array]
+# * `y_lims`: y-limits for TCANE track plot, in degrees latitude [array]
+# * `sigma_X`: width of uncertainty for X-component of track forecast, in degrees longitude [array]
+# * `sigma_Y`: width of uncertainty for Y-component of track forecast, in degrees latitude [array]
+
 def get_plot_lims_fore(X):
     #
     X.columns = map(lambda x: str(x).upper(), X.columns)
@@ -81,8 +105,21 @@ def get_plot_lims_fore(X):
     x_lims = [int(round(x_min.min()/5.0)*5.0),int(round(x_max.max()/5.0)*5.0)]
     y_lims = [int(round(y_min.min()/5.0)*5.0),int(round(y_max.max()/5.0)*5.0)]
     return x_lims,y_lims,sigma_X,sigma_Y
-#
+### `make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.9,),alpha=0.4,)`
+# 
+# This function plots the ellipses of uncertainty on a map for TCANE track forecasts. 
+# 
+# <b>Inputs</b>:
+# * `ax`: handle for desired figure
+# * `Xi`: Dataframe containing TCANE input for track forecasts [Dataframe]
+# * `X_out`: Dataframe containing TCANE output for track forecasts [Dataframe]
+# * `fore_sel`: early or late forecasts [str]
+# * `show_all`: show all forecast lead times or not? [boolean; default is False]
+# * `contours`: desired uncertatiny contours [array, default is (.1,.25,.5,.75,.9,)]
+# * `alpha`: transparency level for contours [float, default is 0.5]
+
 def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.9,),alpha=0.4,):
+    # Show all forecast lead times or not? By default, we show forecasts at [12,24,36,48,60,72,96,120] hours but this can be changed if desired. 
     if show_all:
         leadtimes = np.arange(12,121,12)
         X = Xi.set_index(['ttype']).xs(fore_sel)
@@ -91,6 +128,7 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
         ind_keep = [12,24,36,48,60,72,96,120]
         Xis = Xi[Xi.reset_index().set_index(['FHOUR']).index.isin(ind_keep)]
         X = Xis.reset_index().set_index(['ttype']).xs(fore_sel)
+    # Get the coordinates for the ellipses of uncertainty
     x_lims,y_lims,details,ax0 = plot_probability_ellipses(
         X,
         ax=ax,
@@ -101,7 +139,7 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
         vector=True,
         )
 #
-    # 
+    # This is all to calculate the plot limits so that we can show all the ellipses but not have the plots be huge
     x_spread = round((max(x_lims) - min(x_lims))/5)*5
     y_spread = round((max(y_lims) - min(y_lims))/5)*5
     x_margin = x_spread/4
@@ -136,8 +174,24 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
         ttype_plt = fore_sel
     ax.set_title('{name}, {date}, {fore_sel}'.format(name=Xi['Name'].iloc[0],date=Xi['DATE'].iloc[0],fore_sel=ttype_plt),fontsize=22)
     return ax
-##
+
+## `make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_all=False,contours=(.1,.25,.5,.75,.9,),alpha=0.4,use_gradient_color=True)`
+# 
+# This function plots the ellipses of uncertainty specified by `cmax` for TCANE track forecasts and TCANE climo track forecasts. 
+# 
+# <b>Inputs</b>:
+# * `ax`: handle for desired figure
+# * `Xi`: Dataframe containing TCANE input for track forecasts [Dataframe]
+# * `X_out`: Dataframe containing TCANE output for track forecasts [Dataframe]
+# * `Xi_clim`: Dataframe containing TCANE climatology output for track forecasts [Dataframe]
+# * `fore_sel`: early or late forecasts [str]
+# * `cmax`: desired uncertatiny contour [float, default is 2/3]
+# * `show_all`: show all forecast lead times or not? [boolean; default is False]
+# * `contours`: desired uncertatiny contours [array, default is (.1,.25,.5,.75,.9,)]
+# * `alpha`: transparency level for contours [float, default is 0.5]
+# * `use_gradient_color`: do we want the contours to have a color gradient or all be one color? [boolean, default is false]
 def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_all=False,alpha=0.4,use_gradient_color=True):
+    # Show all forecast lead times or not? By default, we show forecasts at [12,24,36,48,60,72,96,120] hours but this can be changed if desired. 
     if show_all:
         leadtimes = np.arange(12,121,12)
         X = Xi.set_index(['ttype']).xs(fore_sel)
@@ -149,8 +203,6 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
         Xic = Xi_clim[Xi_clim.reset_index().set_index(['FHOUR']).index.isin(ind_keep)]
         X = Xis.reset_index().set_index(['ttype']).xs(fore_sel)
         X_clim = Xic.reset_index().set_index(['ttype']).xs(fore_sel)
-    # Test red_orange colors
-    
    # Plot climo ellipse
     x_lims,y_lims,details,ax0 = plot_probability_ellipses(
         X_clim,
@@ -185,7 +237,7 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
         linetype='-',
         linewt=4,
         use_gradient_color=True)
-#
+# This is all to calculate the plot limits so that we can show all the ellipses but not have the plots be huge
     plot0_lon = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LONN'])
     plot0_lat = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LATN'])
     #
