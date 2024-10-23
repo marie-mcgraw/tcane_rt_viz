@@ -142,9 +142,9 @@ def TCANE_track_plots_with_climo(track_sub,df_out,track_sub_clim,storm_date,df_i
     fig5.tight_layout()
     # fig5.suptitle('{name}, {date}'.format(name=track_sub['Name'].iloc[0],date=track_sub['DATE'].iloc[0],
          #                                  fontsize=75),y=1.01)
-    fig5.savefig('{target_savedir}/magma_TRACK_climo_{cmax}_pctile_{name}_{exdate}_{type_sel}.pdf'.format(cmax=np.round(cmax*100,0).astype(int),
+    fig5.savefig('{target_savedir}/TRACK_climo_{cmax}_pctile_{name}_{exdate}_{type_sel}.pdf'.format(cmax=np.round(cmax*100,0).astype(int),
             target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig5.savefig('{target_savedir}/magma_TRACK_climo_{cmax}_pctile_{name}_{exdate}_{type_sel}.png'.format(cmax=np.round(cmax*100,0).astype(int),
+    fig5.savefig('{target_savedir}/TRACK_climo_{cmax}_pctile_{name}_{exdate}_{type_sel}.png'.format(cmax=np.round(cmax*100,0).astype(int),
             target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     return ('Track plotted with climo for ',cmax)
 
@@ -215,7 +215,7 @@ def tcane_plotting_make_ALL(in_dir,out_dir,clim_dir,bdeck_dir,storm_ID,forecast_
     fnames_output = glob.glob(out_dir+'{storm_ID}_{forecast}*.dat'.format(storm_ID=storm_ID,forecast=forecast_ID))
     # Get full filename
     fi = fnames_input[0]
-    storm_date = storm_ID+'_'+forecast_ID
+    storm_date = storm_ID+'_'+forecast_ID[4:]
     print('running case ',storm_date)
     fo = glob.glob(out_dir+'{storm_date}_{forecast}*.dat'.format(storm_date=storm_ID,forecast=forecast_ID))[0]
     # Load TCANE datasets
@@ -252,9 +252,9 @@ def tcane_plotting_make_ALL(in_dir,out_dir,clim_dir,bdeck_dir,storm_ID,forecast_
     df_climo[['ATCFID','NAME']] = 'Climo'
     df_climo[['DATE','LATN','LONN']] = df_out[['DATE','LATN','LONN']]
     # Track variables for early forecasts 
-    track_sub2_e,track_xplot_e = get_plot_vars_TRACK(df_out,df_in,fore_sel='erly')
+    track_sub2_e,track_xplot_e = get_plot_vars_TRACK(df_out,df_in,ttype_sel='erly')
     # Track variables using TCANE climo for climo plots 
-    track_sub_clim_e,track_xplot_clim_e = get_plot_vars_TRACK(df_climo,df_in,fore_sel='erly')
+    track_sub_clim_e,track_xplot_clim_e = get_plot_vars_TRACK(df_climo,df_in,ttype_sel='erly')
     track_sub2_e[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']] = track_sub2_e[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']].astype(float)
     track_sub_clim_e[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']] = track_sub_clim_e[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']].astype(float)
     # Check for end of forecast:
@@ -278,8 +278,8 @@ def tcane_plotting_make_ALL(in_dir,out_dir,clim_dir,bdeck_dir,storm_ID,forecast_
         # Plots of category probability and RI probability
         TCANE_plots_cat_and_RI_plots(TC_l,c_TC_l,df_in,storm_date,target_savedir,'late',RI_l,edeck_all,bas_ab,c_RI_l)
         # Track plot variables for late forecasts
-        track_sub2_l,track_xplot_l = get_plot_vars_TRACK(df_out,df_in,fore_sel='late')
-        track_sub_clim_l,track_xplot_clim_l = get_plot_vars_TRACK(df_climo,df_in,fore_sel='late')
+        track_sub2_l,track_xplot_l = get_plot_vars_TRACK(df_out,df_in,ttype_sel='late')
+        track_sub_clim_l,track_xplot_clim_l = get_plot_vars_TRACK(df_climo,df_in,ttype_sel='late')
         track_sub2_l[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']] = track_sub2_l[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']].astype(float)
         track_sub_clim_l[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']] = track_sub_clim_l[['LONN','LATN','mu_u','mu_v','sigma_u','sigma_v','rho','OFDX','OFDY']].astype(float)
         # Check for end of forecast:
