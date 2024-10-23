@@ -1,28 +1,30 @@
 # tcane_rt_viz
 This code makes real-time graphical output for the TCANE model. After you have cloned this repo using `git clone`, navigate to the correct directory (`tcane_realtime_plotting`). 
 
-1. Set up the environment file using `conda`: `conda env create -f environment.yml` (note that creating the environment might take a few minutes; don't panic! You only have to do this part once). This environment can only be used to run the realtime plotting code–we can’t train the model in this environment.
+1. <b>Set up the environment file</b> using `conda`: `conda env create -f environment.yml` (note that creating the environment might take a few minutes; don't panic! You only have to do this part once). This environment can only be used to run the realtime plotting code–we can’t train the model in this environment.
 
-2. To activate the environment, run `conda activate tcane_rt`. To deactivate, the command is `conda deactivate`. The Python environment will need to be activated before running the plotting code. It should not affect any Fortran operations.
+2. To <b>activate the environment</b>, run `conda activate tcane_rt`. To deactivate, the command is `conda deactivate`. The Python environment will need to be activated before running the plotting code. It should not affect any Fortran operations.
 
-3. Make sure your directory structure is correct: You should have a main directory that contains a Python script (`run_TCANE_rt_plotting.py`), a Jupyter notebook (`run_TCANE_rt_plotting.ipynb`), the environment file (`environment.yml`), and two subdirectories, `utils` and `Figures`. `utils` contains all of the functions and subroutines used to make the TCANE visuals. A more detailed description of what each script in `utils` contains is at the end of this readme. If the `Figures` directory doesn’t exist yet, don’t worry, the plotting code will create it for you.
+3. Make sure your <b>directory structure</b> is correct: You should have a main directory that contains a Python script (`run_TCANE_rt_plotting.py`), a Jupyter notebook (`run_TCANE_rt_plotting.ipynb`), the environment file (`environment.yml`), and two subdirectories, `utils` and `Figures`. `utils` contains all of the functions and subroutines used to make the TCANE visuals. A more detailed description of what each script in `utils` contains is at the end of this readme. If the `Figures` directory doesn’t exist yet, don’t worry, the plotting code will create it for you.
 
-4.  The plotting code needs realtime TCANE input files and output files, and TCANE climatology, to run. The plotting code can be run from the command line with the following inputs: `python run_TCANE_rt_plotting.py STORMID FOREDATE`
-  * `STORMID` contains the ATCFID of the desired storm, in the form `BBNNYYYY`, where `BB` is the 2-letter basin abbreviation, `NN` is the 2 character storm number, and `YYYY` is the 4 character year. [string]
-  * `FOREDATE` contains the forecast date of the desired storm in the form `MMDDHH`. [string]
-
-  In addition, the plotting code needs to know where the TCANE files are located. The user needs to specify the relevant directories for TCANE input, output, and climatology files; we also need to specify the relevant directories for the real-time b-deck and e-deck files. These directories are specified within the Python script (`run_TCANE_rt_plotting.py`), as we expect these file paths to stay the same from forecast to forecast. The user should go into this script and update the directories before running this code for the first time; afterwards, these directories should not need to be changed. The directories are: 
+4.  <b>Running the TCANE visualization code</b>: The plotting code needs realtime TCANE input files and output files; TCANE climatology; and real-time b-deck and e-deck files to run. First, the plotting code needs to know where the TCANE files are located. The user needs to specify the relevant directories for TCANE input, output, and climatology files; we also need to specify the relevant directories for the real-time b-deck and e-deck files. These directories are specified within the Python script (`run_TCANE_rt_plotting.py`), as we expect these file paths to stay the same from forecast to forecast. <b>The user should go into this script and update the directories before running this code for the first time</b>; afterwards, these directories should not need to be changed. The directories are: 
 
   * `out_dir` is the directory where the TCANE output files are located. (`out_dir`, line 44 of `run_TCANE_rt_plotting.py`)
   * `clim_dir` is the directory where the TCANE climatology files are located. (`clim_dir`, line 45 of `run_TCANE_rt_plotting.py`)
   * `in_dir` is the directory where the TCANE input files are located. (`in_dir`, line 46 of `run_TCANE_rt_plotting.py`)
   * `bdeck_dir` is the directory where realtime b-deck and e-deck files are located. (`bdeck_dir`, line 47 of `run_TCANE_rt_plotting.py`)
 
-5.  The main output of this code is figures. The figures will be located in `Figures/{storm_ID}/`. If this directory does not already exist, the code will create it. All figures for a given `storm_ID` will be located in the same directory. Figures will be saved in both PDF and PNG format. Separate figures for both early and late forecasts will be generated.
+Then, the <b>visualization code can be run from the command line</b> with the following inputs: `python run_TCANE_rt_plotting.py STORMID FOREDATE`
+  * `STORMID` contains the ATCFID of the desired storm, in the form `BBNNYYYY`, where `BB` is the 2-letter basin abbreviation, `NN` is the 2 character storm number, and `YYYY` is the 4 character year. [string]
+  * `FOREDATE` contains the forecast date of the desired storm in the form `MMDDHH`. [string]
 
-6.  NOTE ON LATE FORECASTS: If the late runs for a given forecast time are not available when the code is run, it will only produce plots for the early forecasts. 
+5.  <b>Output</b>: The main output of this code is figures. The figures will be located in `Figures/{storm_ID}/`. If this directory does not already exist, the code will create it. All figures for a given `storm_ID` will be located in the same directory. Figures will be saved in both PDF and PNG format. Separate figures for both early and late forecasts will be generated.
 
-#### Table of Contents for `utils/`. The `utils/` directory contains all of the essential code to create the TCANE visualizations. The following files are contained in `utils/`:
+6.  <i>NOTE ON LATE FORECASTS</i>: If the late runs for a given forecast time are not available when the code is run, it will only produce plots for the early forecasts. 
+
+## Table of Contents for `utils/`
+
+The `utils/` directory contains all of the essential code to create the TCANE visualizations. This code should only be of interest to the TCANE development team, though end users may want to make small changes such as changing color schemes, updating default settings, and so on. The following files are contained in `utils/`:
 
 `tcane_rt_plotting.py`: This file is where we call most of the plotting code. It contains three functions:
 * `tcane_plotting_make_ALL`: puts it all together–we give it a storm and forecast ID and tell it where to look, and it loads all the data and calls the functions we need to make the plots. This function takes the following steps:
