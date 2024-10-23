@@ -1,0 +1,11 @@
+# Don't push figures
+Figures/
+*.com
+*.exe
+*.zip
+*.tar
+*.7z
+*.gz
+*.log
+*.sh
+*.sql
