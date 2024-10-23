@@ -65,7 +65,8 @@ def plot_ellipse(ax, sigma_u, sigma_v, rho, color):
 
 def get_plot_vars_TRACK(X_out,X_in,ttype_sel):
     X_plot = X_out.set_index(['FHOUR','TTYPE']).xs((ttype_sel),level=1)[['LONN','LATN','DATE','MU_U','MU_V','SIGMA_U','SIGMA_V','RHO','NAME']]
-    X_plot[['OFDX','OFDY']] = X_in.set_index(['FHOUR'])[['OFDX','OFDY']]
+    #X_plot = X_plot[~X_plot.index.duplicated()]
+    X_plot[['OFDX','OFDY']] = X_in.set_index(['FHOUR'])[~X_in.set_index(['FHOUR']).index.duplicated()][['OFDX','OFDY']]
     X_plot['ftime(hr)'] = X_plot.index
     X_plot = X_plot.rename(columns={'MU_U':'mu_u','MU_V':'mu_v','SIGMA_U':'sigma_u','SIGMA_V':'sigma_v','RHO':'rho','NAME':'Name'})
     fore_vecs = np.arange(12,X_plot.dropna(how='any').index.max()+1,12)

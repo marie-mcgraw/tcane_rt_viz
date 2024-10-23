@@ -82,7 +82,7 @@ def read_in_TCANE(filename):
 def get_TCANE_distribution(df,ttype_sel,df_in):
     dfx = df.set_index(['TTYPE','FHOUR']).loc[ttype_sel]
     # dfx = df[df['TTYPE']==ttype_sel].set_index(['FHOUR'])
-    dfi = df_in.set_index(['FHOUR'])
+    dfi = df_in.set_index(['FHOUR'])[~df_in.set_index(['FHOUR']).index.duplicated()]
     df_tcdist = pd.DataFrame(index=dfx.index,columns=['DIST','TTYPE'])
     for ihr in dfx.index:
         if ihr not in dfi.index:
