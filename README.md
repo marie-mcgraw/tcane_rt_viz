@@ -3,7 +3,7 @@ This code makes real-time graphical output for the TCANE model. After you have c
 
 1. <b>Set up the environment file</b> using `conda`: `conda env create -f environment.yml` (note that creating the environment might take a few minutes; don't panic! You only have to do this part once). This environment can only be used to run the realtime plotting code–we can’t train the model in this environment.
 
-2. To <b>activate the environment</b>, run `conda activate tcane_rt`. To deactivate, the command is `conda deactivate`. The Python environment will need to be activated before running the plotting code. It should not affect any Fortran operations.
+2. To <b>activate the environment</b>, run `conda activate tcane_rt`. To deactivate, the command is `conda deactivate`. The Python environment will need to be activated before running the plotting code. It should not affect any Fortran operations. You will need to activate the environment for every session where you want to run the visualization code. To activate an environment in a shell script, use the command `source activate tcane_rt`. You can deactivate the Python environment at the end of the script using `deactivate tcane_rt`.  
 
 3. Make sure your <b>directory structure</b> is correct: You should have a main directory that contains a Python script (`run_TCANE_rt_plotting.py`), a Jupyter notebook (`run_TCANE_rt_plotting.ipynb`), the environment file (`environment.yml`), and two subdirectories, `utils` and `Figures`. `utils` contains all of the functions and subroutines used to make the TCANE visuals. A more detailed description of what each script in `utils` contains is at the end of this readme. If the `Figures` directory doesn’t exist yet, don’t worry, the plotting code will create it for you.
 
