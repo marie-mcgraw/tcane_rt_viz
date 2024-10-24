@@ -1,5 +1,8 @@
 # Don't push figures
 Figures/
+.ipynb_checkpoints/
+utils/.ipynb_checkpoints/
+utils/__pycache__/
 *.com
 *.exe
 *.zip
