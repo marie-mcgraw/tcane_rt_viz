@@ -50,15 +50,15 @@ def plot_ellipse(ax, sigma_u, sigma_v, rho, color):
     y = r * sigma_v * (rho * np.cos(THETA) + np.sqrt(1 - rho * rho) * np.sin(THETA))
     ax.plot(x, y, '-', color=color, linewidth=4)
 
-## `get_plot_vars_TRACK(X_out,X_in,ttype_sel)`
-# 
+# # `get_plot_vars_TRACK(X_out,X_in,ttype_sel)`
+#
 # This function just reformats some TCANE track forecast variables for easier plotting
-# 
+#
 # <b>Inputs</b>:
 # * `X_out`: Dataframe containing TCANE output for track forecasts [Dataframe]
 # * `X_in`: Dataframe containing TCANE input data [Dataframe]
 # * `ttype_sel`: time type (`erly` or `late`) [str]
-# 
+#
 # <b>Outputs</b>: 
 # * `X_p2`: Dataframe containing reformatted TCANE track forecast data [Dataframe]
 # * `X_plot`: Dataframe containing reformatted TCANE track forecast data [Dataframe]
@@ -121,6 +121,11 @@ def get_plot_lims_fore(X):
 
 def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.9,),alpha=0.4,):
     # Show all forecast lead times or not? By default, we show forecasts at [12,24,36,48,60,72,96,120] hours but this can be changed if desired. 
+    # Show all forecast lead times or not? By default, we show forecasts at [12,24,36,48,60,72,96,120] hours but this can be changed if desired. 
+    Xi.loc[Xi['LONN']==-9999.00, 'LONN'] = np.nan
+    Xi.loc[Xi['LATN']==-9999.00, 'LATN'] = np.nan
+    #Xi_clim.loc[Xi_clim['LONN']==-9999.00, 'LONN'] = np.nan
+    #Xi_clim.loc[Xi_clim['LATN']==-9999.00, 'LATN'] = np.nan
     if show_all:
         leadtimes = np.arange(12,121,12)
         X = Xi.set_index(['ttype']).xs(fore_sel)
@@ -141,6 +146,16 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
         )
 #
     # This is all to calculate the plot limits so that we can show all the ellipses but not have the plots be huge
+    plot0_lon = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LONN'])
+    plot0_lat = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LATN'])
+    # Check x and y lims for outliers and replace them if they have outliers
+    # check for outliers
+    x_lims = [plot0_lon -10 if x < 0 else x for x in x_lims]
+    y_lims = [plot0_lat - 10 if x < 0 else x for x in y_lims]
+    # positive outliers
+    x_lims = [plot0_lon + 20 if x > 360 else x for x in x_lims]
+    y_lims = [plot0_lat + 10 if x > 90 else x for x in y_lims]
+    #
     x_spread = round((max(x_lims) - min(x_lims))/5)*5
     y_spread = round((max(y_lims) - min(y_lims))/5)*5
     x_margin = x_spread/4
@@ -156,8 +171,6 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
     y_ext_min = min(min(y_lims),Xi['LATN'].min())
     y_ext_max = max(max(y_lims),Xi['LATN'].max())
     #
-    plot0_lon = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LONN'])
-    plot0_lat = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LATN'])
     #
     ax.plot(plot0_lon,plot0_lat,'x',color='k',markersize=7,transform=ct.crs.PlateCarree(central_longitude=0.))
     ax.text(plot0_lon+0.5,plot0_lat+0.25,'0',fontsize=10,transform=ct.crs.PlateCarree(central_longitude=0.))
@@ -168,7 +181,19 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
     #
     # xdiff = max(xlims) - min(xlims)
     # ydiff = max(ylims) - min(ylims)
-    ax.set_extent([x_ext_min-x_margin,x_ext_max+x_margin,y_ext_min-y_margin,y_ext_max+y_margin])
+    # print(x_ext_min,x_ext_max)
+    plotx_ll = max(x_ext_min-x_margin,220)
+    plotx_up = min(x_ext_max+x_margin,359)
+    ploty_ll = max(y_ext_min-y_margin,5)
+    ploty_up = y_ext_max+y_margin
+    #if plot
+    # print(plotx_ll,plotx_up,ploty_ll,ploty_up)
+    ax.set_extent([plotx_ll,
+                   np.round(plotx_up),
+                   np.round(ploty_ll),
+                   np.round(ploty_up)],
+                 crs=ccrs.PlateCarree(central_longitude=0.))
+    #ax.set_extent([220,300,10,45],crs=ccrs.PlateCarree(central_longitude=0.))
     if fore_sel == 'erly':
         ttype_plt = 'early'
     else:
@@ -193,6 +218,10 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
 # * `use_gradient_color`: do we want the contours to have a color gradient or all be one color? [boolean, default is false]
 def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_all=False,alpha=0.4,use_gradient_color=True):
     # Show all forecast lead times or not? By default, we show forecasts at [12,24,36,48,60,72,96,120] hours but this can be changed if desired. 
+    Xi.loc[Xi['LONN']==-9999.00, 'LONN'] = np.nan
+    Xi.loc[Xi['LATN']==-9999.00, 'LATN'] = np.nan
+    Xi_clim.loc[Xi_clim['LONN']==-9999.00, 'LONN'] = np.nan
+    Xi_clim.loc[Xi_clim['LATN']==-9999.00, 'LATN'] = np.nan
     if show_all:
         leadtimes = np.arange(12,121,12)
         X = Xi.set_index(['ttype']).xs(fore_sel)
@@ -241,6 +270,17 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
 # This is all to calculate the plot limits so that we can show all the ellipses but not have the plots be huge
     plot0_lon = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LONN'])
     plot0_lat = float(X_out.set_index(['FHOUR','TTYPE']).loc[(0,'late')]['LATN'])
+    # Check x and y lims for outliers and replace them if they have outliers
+    # check for outliers
+    x_lims = [plot0_lon -10 if x < 0 else x for x in x_lims]
+    x_lims2 = [plot0_lon - 10 if x < 0 else x for x in x_lims2]
+    y_lims = [plot0_lat - 10 if x < 0 else x for x in y_lims]
+    y_lims2 = [plot0_lat - 10 if x < 0 else x for x in y_lims2]
+    # positive outliers
+    x_lims = [plot0_lon + 20 if x > 360 else x for x in x_lims]
+    x_lims2 = [plot0_lon + 20 if x > 360 else x for x in x_lims2]
+    y_lims = [plot0_lat + 10 if x > 90 else x for x in y_lims]
+    y_lims2 = [plot0_lat + 10 if x > 90 else x for x in y_lims2]
     #
     ax.plot(plot0_lon,plot0_lat,'x',color='k',markersize=7,transform=ct.crs.PlateCarree(central_longitude=0.))
     ax.text(plot0_lon+0.5,plot0_lat+0.25,'0',fontsize=10,transform=ct.crs.PlateCarree(central_longitude=0.))
@@ -262,7 +302,19 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
     x_ext_max = max(x_lims,x_lims2)
     y_ext_min = min(y_lims,y_lims2)
     y_ext_max = max(y_lims,y_lims2)
-    ax.set_extent([min(x_ext_min)-x_margin,max(x_ext_max)+x_margin,min(y_ext_min)-y_margin,max(y_ext_max)+y_margin])
+    # print('x extent is [{xm}, {xmx}]'.format(xm=x_ext_min,xmx=x_ext_max))
+    # print('y extent is [{ym}, {ymx}]'.format(ym=y_ext_min,ymx=y_ext_max))
+    # print('x_margin is {xmar}, y_margin is {ymar}'.format(xmar=x_margin,ymar=y_margin))
+    plotx_ll = max(x_ext_min)-x_margin
+    plotx_up = min(max(x_ext_max)+x_margin/2,359)
+    ploty_ll = min(y_ext_min)-y_margin
+    ploty_up = max(y_ext_max)+y_margin
+    #if plot
+    ax.set_extent([plotx_ll,
+                   plotx_up,
+                   ploty_ll,
+                   ploty_up],
+                 crs=ccrs.PlateCarree(central_longitude=0.))
     #
     if fore_sel == 'erly':
         ttype_plt = 'early'

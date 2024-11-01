@@ -21,7 +21,7 @@ from utils.plots import plot_probability_ellipses, set_plot_rc, format_spines, a
 from utils.mahalanobis import get_pixel_array, plot_cdf, compute_cdf, compute_rsqr
 # from plots import plot_probability_ellipses
 
-#1. Call functions to make intensity forecast plots
+# 1. Call functions to make intensity forecast plots
 # This function plots the TCANE intensity forecast and compares it to the TCANE consensus forecast (for early forecasts) or the official NHC forecast (for late forecasts). 
 #
 # <b>Inputs</b>:
@@ -59,7 +59,7 @@ def TCANE_plots_intensity_forecasts(pct_e,dfout,dfin,stormdate,targetdir,type_se
     # fig2.savefig('{target_savedir}/p1-99_{name}_{exdate}_with_BTR.png'.format(target_savedir=targetdir,name=dfin.iloc[0]['NAME'],exdate=stormdate),format='png',dpi=400,bbox_inches='tight')
     return ('intensity forecats plots done')
 
-#2. Call functions to make category and RI plots
+# 2. Call functions to make category and RI plots
 # This function plots the TCANE RI forecast and category probability plots. 
 #
 # <b>Inputs</b>:
@@ -113,7 +113,7 @@ def TCANE_plots_cat_and_RI_plots(TC_e,c_TC_e,df_in,storm_date,target_savedir,typ
     
     return ('RI and Pr(Category) plots done')
 
-##3. Make track probability plots. Default chosen contour is 66.667% but user can change `cmax` argument if they want to plot a different contour. 
+# #3. Make track probability plots. Default chosen contour is 66.667% but user can change `cmax` argument if they want to plot a different contour. 
 
 # This function plots the TCANE track forecast uncertainty at a level specified by `cmax` and compares this TCANE forecast uncertainty to a TCANE climatological forecast uncertainty. 
 #
@@ -132,7 +132,7 @@ def TCANE_track_plots_with_climo(track_sub,df_out,track_sub_clim,storm_date,df_i
         type_sel_plt = 'EARLY'
     else:
         type_sel_plt = type_sel.upper()
-    fig5 = plt.figure(figsize=(12,8))
+    fig5 = plt.figure(figsize=(15,12))
     ax5 = fig5.add_subplot(1,1,1,projection=ct.crs.PlateCarree(central_longitude=0.))
     ax5 = make_track_plt_climo(ax5,track_sub,df_out,track_sub_clim,type_sel,cmax=cmax,show_all=False)
     # ax5.set_ylim([mn.values[0],mx.values[0]])
@@ -148,7 +148,7 @@ def TCANE_track_plots_with_climo(track_sub,df_out,track_sub_clim,storm_date,df_i
             target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     return ('Track plotted with climo for ',cmax)
 
-##4. Make track plot all ellipses
+# #4. Make track plot all ellipses
 
 # This function makes the TCANE track plot with the full uncertainty distribution. 
 #
@@ -167,22 +167,32 @@ def TCANE_track_plot_all(track_sub,df_out,target_savedir,type_sel,df_in,storm_da
         type_sel_plt = type_sel.upper()
     fig4 = plt.figure(figsize=(12,8))
     ax4 = fig4.add_subplot(1,1,1,projection=ct.crs.PlateCarree(central_longitude=0.))
+    # Drop forecast times with missing data
+    #track_sub = track_sub[track_sub.LATN != -9999.00]
+    track_sub = track_sub[track_sub.LONN != -9999.00]
+    track_sub = track_sub.dropna(subset = ['LONN','LATN'])
+    # print(track_sub)
     ax4 = make_track_plt(ax4,track_sub,df_out,type_sel,show_all=False)
     mx = df_out[['LATN']].astype(float).max()*1.5
     mn = df_out[['LATN']].astype(float).min()*0.75
     # ax4.set_ylim([mn.values[0],mx.values[0]])
     resize_x = ax4.get_xlim()
     resize_y = ax4.get_ylim()
-    ax4.set_extent([resize_x[0]*1.05,resize_x[1]*0.95,resize_y[0]*0.95,resize_y[1]*1.05])
-    # ax4b.set_extent([resize_x[0],resize_x[1],resize_y[0],resize_y[1]])
+    # print(resize_x,resize_y)
+    if max(resize_x) - min(resize_x) > 50:
+        ax4.set_extent([resize_x[0]*.75,resize_x[1]*1.15,
+                        resize_y[0]*0.95,resize_y[1]*.85])
+    # ax4.set_extent([resize_x[0],resize_x[1],resize_y[0],resize_y[1]])
     fig4.tight_layout()
     #fig4.suptitle('{name}, {date}'.format(name=track_sub['Name'].iloc[0],date=track_sub['DATE'].iloc[0],
     #                                      fontsize=75),y=1.01)
-    fig4.savefig('{target_savedir}/TRACK_{name}_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig4.savefig('{target_savedir}/TRACK_{name}_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig4.savefig('{target_savedir}/TRACK_{name}_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,
+       name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig4.savefig('{target_savedir}/TRACK_{name}_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,
+        name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     return ('Track forecasts with all probability ellipses plotted')
 
-##5. ### `tcane_plotting_make_ALL`
+# #5. ### `tcane_plotting_make_ALL`
 
 # This function puts it all together and reads in the relevant files for the forecast specified by `storm_ID` and `forecast_ID`, calculates the TCANE forecast distribution, and makes the desired graphics. The TCANE graphics will be located in `Figures/storm_ID/`, and are saved in both PDF and PNG format. 
 # 
@@ -211,13 +221,13 @@ def tcane_plotting_make_ALL(in_dir,out_dir,clim_dir,bdeck_dir,storm_ID,forecast_
     # Get basin from ATCFID
     bas_ab = storm_ID[0:2].lower()
     # Locate all files associated with that storm and forecast
-    fnames_input =  glob.glob(in_dir+'{storm_ID}_{forecast}*.dat'.format(storm_ID=storm_ID,forecast=forecast_ID))
-    fnames_output = glob.glob(out_dir+'{storm_ID}_{forecast}*.dat'.format(storm_ID=storm_ID,forecast=forecast_ID))
+    fnames_input =  glob.glob(in_dir+'{storm_ID}_{forecast}*input.dat'.format(storm_ID=storm_ID,forecast=forecast_ID))
+    fnames_output = glob.glob(out_dir+'{storm_ID}_{forecast}*output.dat'.format(storm_ID=storm_ID,forecast=forecast_ID))
     # Get full filename
     fi = fnames_input[0]
     storm_date = storm_ID+'_'+forecast_ID[4:]
     print('running case ',storm_date)
-    fo = glob.glob(out_dir+'{storm_date}_{forecast}*.dat'.format(storm_date=storm_ID,forecast=forecast_ID))[0]
+    fo = glob.glob(out_dir+'{storm_date}_{forecast}*output.dat'.format(storm_date=storm_ID,forecast=forecast_ID))[0]
     # Load TCANE datasets
     df_climo = climo_to_df(clim_dir+'tcane_climo_format_{ba}.dat'.format(ba=bas_ab))
     df_in = read_in_TCANE(fi)

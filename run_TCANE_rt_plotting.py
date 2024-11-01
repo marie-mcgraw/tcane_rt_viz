@@ -41,10 +41,10 @@ def run_plot_code(in_dir,out_dir,clim_dir,bdeck_dir,storm_ID,fore_date):
 # In[3]: These are the directories that point to TCANE output, TCANE input, TCANE climo, and realtime bdeck files. These might be different 
 # on different machines, but should not change from day to day. 
 
-out_dir = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/output/tcane_output/'
-clim_dir = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/input/climo/'
-in_dir = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/output/tcane_input/'
-bdeck_dir = '/mnt/ssd-data1/ATCF/TC-INGEST2/ATCF_RT/ATCF/dat/'
+out_dir   = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/output/tcane_viz_output/'
+clim_dir  = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/input/climo/'
+in_dir    = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/input/tcane_viz_input/'
+bdeck_dir = '/mnt/ssd-data1/projects/tcane/nhc_tcane_dev/data/input/atcf/'
 
 # User input: You will define storm ID and forecast date in the command line--first storm ID, then forecast date. 
 
