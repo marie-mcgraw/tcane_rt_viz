@@ -45,8 +45,8 @@ def TCANE_plots_intensity_forecasts(pct_e,dfout,dfin,stormdate,targetdir,type_se
     #
     fig1.suptitle('TCANE Forecasts, {name}, {ex_date} ({type_sel})'.format(name=dfin.iloc[0]['NAME'],ex_date=stormdate,type_sel=type_sel_plt),fontsize=36,y=1.02)
     fig1.tight_layout()
-    fig1.savefig('{target_savedir}/p1-99_{name}_{exdate}_{type_sel}.pdf'.format(target_savedir=targetdir,name=dfin.iloc[0]['NAME'],exdate=stormdate,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig1.savefig('{target_savedir}/p1-99_{name}_{exdate}_{type_sel}.png'.format(target_savedir=targetdir,name=dfin.iloc[0]['NAME'],exdate=stormdate,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig1.savefig('{target_savedir}/p1-99_{exdate}_{type_sel}.pdf'.format(target_savedir=targetdir,exdate=stormdate,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig1.savefig('{target_savedir}/p1-99_{exdate}_{type_sel}.png'.format(target_savedir=targetdir,exdate=stormdate,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     ## Same plot as above but with best tracks
     # fig2,(ax2a,ax2b) = plt.subplots(1,2,figsize=(20,9))
     # pct_all = pd.concat([pct_e,pct_l])
@@ -84,31 +84,31 @@ def TCANE_plots_cat_and_RI_plots(TC_e,c_TC_e,df_in,storm_date,target_savedir,typ
     # ax20b = get_cat_probs(ax20b,TC_l,c_TC_l,df_in,'late')
     fig20.suptitle('{name}, {exdate} ({type_sel})'.format(name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),fontsize=35,y=1.025)
     fig20.tight_layout()
-    fig20.savefig('{target_savedir}/pr_cat_{name}_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig20.savefig('{target_savedir}/pr_cat_{name}_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig20.savefig('{target_savedir}/pr_cat_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig20.savefig('{target_savedir}/pr_cat_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     # Probability of RI
     fig22,ax22 = plt.subplots(1,1,figsize=(10,6))
     RI_all = RI_e
     ax22 = plot_RI(ax22,RI_all,edeck_all)
     ax22.set_title('Prob. of RI for {name} ({exdate}, {type_sel})'.format(name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),fontsize=28)
     fig22.tight_layout()
-    fig22.savefig('{target_savedir}/pr_RI_{name}_{exdate}_{type_sel}_with_edeck.pdf'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig22.savefig('{target_savedir}/pr_RI_{name}_{exdate}_{type_sel}_with_edeck.png'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig22.savefig('{target_savedir}/pr_RI_{exdate}_{type_sel}_with_edeck.pdf'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig22.savefig('{target_savedir}/pr_RI_{exdate}_{type_sel}_with_edeck.png'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     # Same as above but without the edeck models
     fig22,ax22 = plt.subplots(1,1,figsize=(10,6))
     # RI_all = pd.concat([RI_e,RI_l])
     ax22 = plot_RI(ax22,RI_all)#,edeck_all)
     ax22.set_title('Prob. of RI for {name} ({exdate}, {type_sel})'.format(name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),fontsize=28)
     fig22.tight_layout()
-    fig22.savefig('{target_savedir}/pr_RI_{name}_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig22.savefig('{target_savedir}/pr_RI_{name}_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig22.savefig('{target_savedir}/pr_RI_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig22.savefig('{target_savedir}/pr_RI_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     ## 
     fig77,ax77e = plt.subplots(1,1,figsize=(10,6))
     plot_RI_bar(ax77e,RI_all,type_sel,c_RI_e,bas_ab,edeck_all=pd.DataFrame())
     ax77e.set_title('Prob. of RI for {name} ({exdate}, {type_sel})'.format(name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),fontsize=24)
     fig77.tight_layout()
-    fig77.savefig('{target_savedir}/barplot_pr_RI_{name}_{exdate}_{type_sel}_early.pdf'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig77.savefig('{target_savedir}/barplot_pr_RI_{name}_{exdate}_{type_sel}_early.png'.format(target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig77.savefig('{target_savedir}/barplot_pr_RI_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig77.savefig('{target_savedir}/barplot_pr_RI_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     #
     
     return ('RI and Pr(Category) plots done')
@@ -142,10 +142,10 @@ def TCANE_track_plots_with_climo(track_sub,df_out,track_sub_clim,storm_date,df_i
     fig5.tight_layout()
     # fig5.suptitle('{name}, {date}'.format(name=track_sub['Name'].iloc[0],date=track_sub['DATE'].iloc[0],
          #                                  fontsize=75),y=1.01)
-    fig5.savefig('{target_savedir}/TRACK_climo_{cmax}_pctile_{name}_{exdate}_{type_sel}.pdf'.format(cmax=np.round(cmax*100,0).astype(int),
-            target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig5.savefig('{target_savedir}/TRACK_climo_{cmax}_pctile_{name}_{exdate}_{type_sel}.png'.format(cmax=np.round(cmax*100,0).astype(int),
-            target_savedir=target_savedir,name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig5.savefig('{target_savedir}/TRACK_climo_{cmax}_pctile_{exdate}_{type_sel}.pdf'.format(cmax=np.round(cmax*100,0).astype(int),
+            target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig5.savefig('{target_savedir}/TRACK_climo_{cmax}_pctile_{exdate}_{type_sel}.png'.format(cmax=np.round(cmax*100,0).astype(int),
+            target_savedir=target_savedir,exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     return ('Track plotted with climo for ',cmax)
 
 # #4. Make track plot all ellipses
@@ -186,10 +186,10 @@ def TCANE_track_plot_all(track_sub,df_out,target_savedir,type_sel,df_in,storm_da
     fig4.tight_layout()
     #fig4.suptitle('{name}, {date}'.format(name=track_sub['Name'].iloc[0],date=track_sub['DATE'].iloc[0],
     #                                      fontsize=75),y=1.01)
-    fig4.savefig('{target_savedir}/TRACK_{name}_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,
-       name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
-    fig4.savefig('{target_savedir}/TRACK_{name}_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,
-        name=df_in.iloc[0]['NAME'],exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
+    fig4.savefig('{target_savedir}/TRACK_{exdate}_{type_sel}.pdf'.format(target_savedir=target_savedir,
+       exdate=storm_date,type_sel=type_sel_plt),format='pdf',bbox_inches='tight')
+    fig4.savefig('{target_savedir}/TRACK_{exdate}_{type_sel}.png'.format(target_savedir=target_savedir,
+        exdate=storm_date,type_sel=type_sel_plt),format='png',dpi=400,bbox_inches='tight')
     return ('Track forecasts with all probability ellipses plotted')
 
 # #5. ### `tcane_plotting_make_ALL`
