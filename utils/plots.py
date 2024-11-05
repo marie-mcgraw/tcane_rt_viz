@@ -159,7 +159,8 @@ def plot_probability_ellipses(
             ax.add_patch(circle)
 
     # get uninterpolated leadtimes
-    df_nonan = df.dropna(subset="OFDX").copy()
+    #df_nonan = df.dropna(subset="OFDX").copy()
+    df_nonan = df.dropna(subset="LONN").copy()
     # plot forecast center
     plt.plot(
         df_nonan["LONN"].values,
@@ -179,6 +180,7 @@ def plot_probability_ellipses(
     # plot bestrack centers
     besttrack_u = df_nonan["LONN"] + KM_TO_DEG * df_nonan["OFDX"]
     besttrack_v = df_nonan["LATN"] + KM_TO_DEG * df_nonan["OFDY"]
+    
     plt.plot(
         besttrack_u.values,
         besttrack_v.values,
@@ -340,7 +342,7 @@ def plot_probability_ellipses_vector(
         ellipse_lims['ymax'].loc[lead_time] = ymal.max()
         #print('mahalanobis x',min(xmal),max(xmal),'; mahalanobis y',min(ymal),max(ymal))
         if annotate_leadtimes:
-            df_nonan = df_plot.dropna(subset="OFDX").copy()
+            df_nonan = df_plot.dropna(subset="LONN").copy()
             if(len(df_nonan) > 0):
                 #for i in np.arange(0,len(df_nonan)):
                 plt.text(

@@ -231,7 +231,11 @@ def tcane_plotting_make_ALL(in_dir,out_dir,clim_dir,bdeck_dir,storm_ID,forecast_
     # Load TCANE datasets
     df_climo = climo_to_df(clim_dir+'tcane_climo_format_{ba}.dat'.format(ba=bas_ab))
     df_in = read_in_TCANE(fi)
+    df_in.replace('-9999.00',np.nan,inplace=True)
+    df_in.replace('-9999.0',np.nan,inplace=True)
     df_out = read_in_TCANE(fo)
+    df_out.replace('-9999.00',np.nan,inplace=True)
+    df_out.replace('-9999.0',np.nan,inplace=True)
     # Make sure that forecast times match
     df_in = df_in[df_in['FHOUR'].isin(df_out['FHOUR'])]
     # Get realtime b-deck and e-deck files that correspond to storm_ID

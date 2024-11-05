@@ -93,14 +93,14 @@ def get_TCANE_distribution(df,ttype_sel,df_in):
         df_tcdist.loc[ihr]['TTYPE'] = ttype_sel
     return df_tcdist
 #####################
-### `make_SHASH(N,tcane_dist,ttype,V0)`
+# ## `make_SHASH(N,tcane_dist,ttype,V0)`
 # This function takes the distribution parameters from the TCANE output files and recreates a SHASH distribution based on the data. This will help us estimate rapid intensification thresholds, probability of reach certain wind speeds, and uncertainty around our predictions. 
 # <b>Inputs</b>: 
 # * `N`: Number of datapoints in the distribution [int]
 # * `tcane_dist`: distribution parameters [`mu`, `sigma`, `gamma`, `tau`] from TCANE output files; one set of parameters per forecast time [Dataframe]
 # * `ttype`: time type; `erly` or `late` [str]
 # * `V0`: initial wind speed [int]
-# 
+#
 # <b>Outputs</b>:
 # * `pdf_ALL`: DataFrame containing data simulated by SHASH distribution; there is one distribution per forecast time [DataFrame]
 def make_SHASH(N,tcane_dist,ttype,V0):
@@ -183,15 +183,15 @@ def get_PDF_CDF(xmax,Y,ttype):
         pdf_cdf_ALL = pd.concat([pdf_cdf_ALL,i_pdf])
     return pdf_cdf_ALL
 #######################
-### `get_RI_info(df,x_in,ttype)`
-# 
+# ## `get_RI_info(df,x_in,ttype)`
+#
 # This function uses the estimated SHASH PDFs to estimate the probability of rapid intensification (`RI_all`) and the probability of achieveing (Cat1, Cat2, etc) intensity (`df_thresh`).
-# 
+#
 # <b>Inputs</b>:
 # * `df`: Dataframe containing the estimated PDFs. Each forecast time has a different PDF [Dataframe]
 # * `x_in`: Dataframe containing TCANE input data (used to get the initial wind speed needed for RI estimation) [Dataframe]
 # * `ttype`: time type (`erly` or `late`) [str]
-# 
+#
 # <b>Outputs</b>: 
 # * `RI_all`: Dataframe containing probability of RI at each RI threshold for each forecast time [Dataframe]
 # * `df_thresh`: Dataframe containing probability of achieving each category on the Saffir-Simpson scale for each forecast time [Dataframe]
@@ -239,4 +239,4 @@ def get_RI_info(df,x_in,ttype):
         df_thresh['TTYPE'] = ttype
         df_thresh.loc[ihr,['PCT Cat1','PCT Cat2','PCT Cat3','PCT Cat4','PCT Cat5']] = pct_RI.values
     return RI_all,df_thresh
-#############################
+""

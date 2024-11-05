@@ -69,7 +69,7 @@ def get_plot_vars_TRACK(X_out,X_in,ttype_sel):
     X_plot[['OFDX','OFDY']] = X_in.set_index(['FHOUR'])[~X_in.set_index(['FHOUR']).index.duplicated()][['OFDX','OFDY']]
     X_plot['ftime(hr)'] = X_plot.index
     X_plot = X_plot.rename(columns={'MU_U':'mu_u','MU_V':'mu_v','SIGMA_U':'sigma_u','SIGMA_V':'sigma_v','RHO':'rho','NAME':'Name'})
-    fore_vecs = np.arange(12,X_plot.dropna(how='any').index.max()+1,12)
+    fore_vecs = np.arange(12,X_plot.dropna(how='all').index.max()+1,12)
     X_p2 = X_plot.loc[fore_vecs]
     X_p2['rho'] = X_p2['rho'].astype(float)
     X_p2['ttype'] = ttype_sel
@@ -188,11 +188,11 @@ def make_track_plt(ax,Xi,X_out,fore_sel,show_all=False,contours=(.1,.25,.5,.75,.
     ploty_up = y_ext_max+y_margin
     #if plot
     # print(plotx_ll,plotx_up,ploty_ll,ploty_up)
-    ax.set_extent([plotx_ll,
-                   np.round(plotx_up),
-                   np.round(ploty_ll),
-                   np.round(ploty_up)],
-                 crs=ccrs.PlateCarree(central_longitude=0.))
+    ax.set_extent([0.975*plotx_ll,
+               1.025*plotx_up,
+               ploty_ll,
+               ploty_up],
+             crs=ccrs.PlateCarree(central_longitude=0.))
     #ax.set_extent([220,300,10,45],crs=ccrs.PlateCarree(central_longitude=0.))
     if fore_sel == 'erly':
         ttype_plt = 'early'
@@ -241,6 +241,7 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
         contours=(cmax,),
         extent=None,
         alpha=alpha,
+        annotate_leadtimes=True,
         colors=None,
         # colors = None,
         vector=True,
@@ -259,6 +260,7 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
         contours=(cmax,),
         extent=None,
         alpha=1-alpha,
+        annotate_leadtimes=True,
         colors=None,
        # colors = None,
         vector=True,
@@ -282,8 +284,8 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
     y_lims = [plot0_lat + 10 if x > 90 else x for x in y_lims]
     y_lims2 = [plot0_lat + 10 if x > 90 else x for x in y_lims2]
     #
-    ax.plot(plot0_lon,plot0_lat,'x',color='k',markersize=7,transform=ct.crs.PlateCarree(central_longitude=0.))
-    ax.text(plot0_lon+0.5,plot0_lat+0.25,'0',fontsize=10,transform=ct.crs.PlateCarree(central_longitude=0.))
+    ax.plot(plot0_lon,plot0_lat,'x',color='k',markersize=10,transform=ct.crs.PlateCarree(central_longitude=0.))
+    ax.text(plot0_lon+0.5,plot0_lat+0.25,'0',fontsize=12,transform=ct.crs.PlateCarree(central_longitude=0.))
     # 
     x_spread = round((max(x_lims) - min(x_lims))/5)*5
     y_spread = round((max(y_lims) - min(y_lims))/5)*5
@@ -310,11 +312,11 @@ def make_track_plt_climo(ax,Xi,X_out,Xi_clim,fore_sel,cmax=np.round(2/3,3),show_
     ploty_ll = min(y_ext_min)-y_margin
     ploty_up = max(y_ext_max)+y_margin
     #if plot
-    ax.set_extent([plotx_ll,
-                   plotx_up,
-                   ploty_ll,
-                   ploty_up],
-                 crs=ccrs.PlateCarree(central_longitude=0.))
+    ax.set_extent([0.975*min(min(x_lims),min(x_lims2)),
+               1.025*max(max(x_lims),max(x_lims2)),
+               ploty_ll,
+               ploty_up],
+             crs=ccrs.PlateCarree(central_longitude=0.))
     #
     if fore_sel == 'erly':
         ttype_plt = 'early'

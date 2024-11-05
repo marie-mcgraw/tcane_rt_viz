@@ -40,17 +40,17 @@ def make_boxplot(ax,Y_e,Y_l,df_in,whis=[2.5,97.5]):
     ax.legend(loc='upper left',fontsize=14)
     return ax
 #########################
-### `get_cat_probs(ax,df,df_clim,df_in,ttype)`
-# 
+# ## `get_cat_probs(ax,df,df_clim,df_in,ttype)`
+#
 # This function takes the input dataframes containing the probabilities of achieving {Cat1...Cat5} wind strength and compares them to the climatological probability of a storm having that wind strength. 
-# 
+#
 # <b>Input</b>: 
 # * `ax`: figure axis
 # * `df`: Dataframe containing the TCANE predicted probabilities of Cat 1, etc [Dataframe]
 # * `df_clim`: Dataframe containing the TCANE climatological probabilities of Cat 1, etc [Dataframe]
 # * `df_in`: Dataframe containing input TCANE file (just needed for the labeling) [Dataframe]
 # * `ttype`: time type, `erly` or `late` (just needed for labeling) [str]
-# 
+#
 # <b>Output</b>:
 # * `ax`: figure axis
 def get_cat_probs(ax,df,df_clim,df_in,ttype):
@@ -83,15 +83,15 @@ def get_cat_probs(ax,df,df_clim,df_in,ttype):
     ax.set_title('{ttype}'.format(ttype=ttype_plt),fontsize=28)
     return ax
 #############################
-### `plot_RI(ax,df,edeck_all)`
-# 
+# ## `plot_RI(ax,df,edeck_all)`
+#
 # This function calculates the probability of rapid intensification (RI) for the TCANE forecasts. There is an option to compare the TCANE forecasts to other forecasts within the edecks. 
-# 
+#
 # <b>Input</b>: 
 # * `ax`: Figure axis
 # * `df`: dataframe containing the RI probabilities (should combine `erly` and `late`) [Dataframe]
 # * `edeck_all`: data from the edecks (optional). Default option is to <b>not</b> plot the edecks. [Dataframe]
-# 
+#
 # <b>Output</b>: 
 # * `ax`: Figure axis
 def plot_RI(ax,df,edeck_all=pd.DataFrame()):
@@ -124,25 +124,30 @@ def plot_RI(ax,df,edeck_all=pd.DataFrame()):
     # ax.set_title('Prob. of RI for {name} ({exdate})'.format(name=df_in.iloc[0]['NAME'],exdate=ex_date),fontsize=28)
     return ax
 #################################
-### `make_pctile_plot(ax,df,ttype,df_out,df_in,bdeck)`
-# 
+# ## `make_pctile_plot(ax,df,ttype,df_out,df_in,bdeck)`
+#
 # This function plots the median TCANE intensity forecast as well as the IQR (25-75th pctiles), realistic best/worst case (10-90th pctiles), and extreme case (1-99th pctiles). `erly` and `late` are plotted separately.
-# 
+#
 # <b>Input</b>:
 # * `ax`: figure axis handle
 # * `df`: Dataframe containing percentiles for TCANE plots [Dataframe]
 # * `ttype`: time type (`erly` or `late`) [str]
 # * `df_out`: Dataframe containing TCANE forecast info (needed for date info) [Dataframe]
-# * `df_in`: Dataframe containing TCANE input data (needed for comparisons to other NHC forecasts) [Dataframe]
+# * `d_in`: Dataframe containing TCANE input data (needed for comparisons to other NHC forecasts) [Dataframe]
 # * `b_deck`: (optional) dataframe containing b-deck info. Used if optional b-deck plotting is turnd on [Dataframe]
-# 
+#
 # <b>Output</b>:
 # * `ax`: figure axis handle
 def make_pctile_plot(ax,df,ttype,df_out,d_in,b_deck=pd.DataFrame()):
     # colors = ('#6449a6','#e58835','#eec91c','#6fa8dc','#ce4969')
+    d_in.replace('-9999.00',np.nan,inplace=True)
+    df_out.replace('-9999.00',np.nan,inplace=True)
+    df.replace(-9999.00,np.nan,inplace=True)
     colors = ('xkcd:charcoal','xkcd:turquoise','xkcd:tangerine','xkcd:crimson')
     df.loc[0,['Y','P0.01','P0.05','P0.1','P0.25','P0.5','P0.75','P0.9','P0.95','P0.99']] = d_in.loc[0,'VMAX0']
     df_i = df.set_index(['TTYPE']).xs(ttype)
+    #df_i.replace('-9999.00',np.nan,inplace=True)
+    #df_i.replace('-9999.0',np.nan,inplace=True)
     # make shading
     ax.fill_between(df_i['FHOUR'],df_i['P0.05'],df_i['P0.95'],color=colors[0],alpha=0.2,label='1-99th pctile')
     ax.fill_between(df_i['FHOUR'],df_i['P0.1'],df_i['P0.9'],color=colors[1],alpha=0.3,label='10-90th pctile')
@@ -155,6 +160,8 @@ def make_pctile_plot(ax,df,ttype,df_out,d_in,b_deck=pd.DataFrame()):
     d_in.loc[-1,'FHOUR'] = 0
     d_in.loc[-1,'VMAXN'] = d_in.loc[-1,'VMAX0']
     d_in.loc[-1,'VMXC'] = d_in.loc[-1,'VMAX0']
+    # Replace -9999 with nans
+    
     if ttype == 'erly':
         yvar = 'VMXC'
         yvlab = 'TCANE consensus'
@@ -190,14 +197,14 @@ def make_pctile_plot(ax,df,ttype,df_out,d_in,b_deck=pd.DataFrame()):
 ################################# 
 # ### `make_all_plotting_data(df_in,df_out,xmax,pvc)`
 # This function is just a wrapper that calls the `tcane_data_funcs` functions to make SHASH distributions, PDFs, CDFs, RI estimates, and percentiles for the TCANE results. 
-# 
+#
 # <b>Inputs</b>:
 # * `df_in`: Dataframe containing TCANE inputs (necessary for comparisons with NHC official forecast, initial intensity and so on) [Dataframe]
 # * `df_out`: Dataframe containing TCANE outputs [Dataframe]
 # * `xmax`: Maxmimum wind speed (needed for PDFs/CDFs) [float]
 # * `type_sel`: indicates 'erly' or 'late' forecasts [str]
 # * `pvc`: Percentiles we want to estimate (default: [.01,.05,.1,.25,.5,.75,.9,.95,.99]) [array]
-# 
+#
 # <b>Outputs</b>:
 # * `Yshash`: SHASH-distributed data for all forecast times for `type_sel` forecast, following paramters in `df_out` [Dataframe]
 # * `pdf_cdf`: PDF and CDF for TCANE model for all forecast times for `type_sel` forecast [Dataframe]
