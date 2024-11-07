@@ -16,7 +16,7 @@ This code makes real-time graphical output for the TCANE model. After you have c
 
 Then, the <b>visualization code can be run from the command line</b> with the following inputs: `python run_TCANE_rt_plotting.py STORMID FOREDATE`
   * `STORMID` contains the ATCFID of the desired storm, in the form `BBNNYYYY`, where `BB` is the 2-letter basin abbreviation, `NN` is the 2 character storm number, and `YYYY` is the 4 character year. [string]
-  * `FOREDATE` contains the forecast date of the desired storm in the form `MMDDHH`. [string]
+  * `FOREDATE` contains the forecast date of the desired storm in the form `YYYYMMDDHH`. [string]
 
 5.  <b>Output</b>: The main output of this code is figures. The figures will be located in `Figures/{storm_ID}/`. If this directory does not already exist, the code will create it. All figures for a given `storm_ID` will be located in the same directory. Figures will be saved in both PDF and PNG format. Separate figures for both early and late forecasts will be generated.
 
